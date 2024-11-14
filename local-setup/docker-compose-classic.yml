@@ -37,7 +37,7 @@ services:
       kafka-topics --bootstrap-server kafka:29092 --list
       
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic my-topic-1 --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic example-topic --replication-factor 1 --partitions 1
       
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:29092 --list
@@ -62,16 +62,50 @@ services:
       retries: 3
 
 #  app-2:
-#    build: .
+#    build: ../classic
 #    restart: always
 #    ports:
 #      - "8081:8080"
 #    environment:
 #      - SPRING_PROFILES_ACTIVE=docker
-#      - CONSUMER_GROUP=group-2
-#    #    depends_on:
-#    #      kafka:
-#    #        condition: service_healthy
+#      - CONSUMER_GROUP=group-1
+#    depends_on:
+#      init-kafka:
+#        condition: service_completed_successfully
+#    healthcheck:
+#      test: "curl --fail --silent http://localhost:8080/private/health | grep UP || exit 1"
+#      interval: 20s
+#      timeout: 5s
+#      retries: 5
+
+#  app-3:
+#    build: ../classic
+#    restart: always
+#    ports:
+#      - "8082:8080"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - CONSUMER_GROUP=group-1
+#    depends_on:
+#      init-kafka:
+#        condition: service_completed_successfully
+#    healthcheck:
+#      test: "curl --fail --silent http://localhost:8080/private/health | grep UP || exit 1"
+#      interval: 20s
+#      timeout: 5s
+#      retries: 5
+#
+#  app-4:
+#    build: ../classic
+#    restart: always
+#    ports:
+#      - "8083:8080"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - CONSUMER_GROUP=group-1
+#    depends_on:
+#      init-kafka:
+#        condition: service_completed_successfully
 #    healthcheck:
 #      test: "curl --fail --silent http://localhost:8080/private/health | grep UP || exit 1"
 #      interval: 20s

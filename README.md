@@ -12,5 +12,5 @@ This repository contains docker compose files to set up everything.
   - This file contains the containers for `zookeeper`, `kafka broker` and `kafka ui`
 - `./tools/docker-compose.yaml`
   - This file contains the containers for `prometheus` and `grafana`
-- `./docker-compose-classic.yaml`
-  - This file imports the config from kafka and tools [folders] and set up the consumers as a normal Kafka Consumer.
+- `./local-setup/docker-compose-classic.yaml`
+  - This file imports the docker compose config for kafka and tools (prometheus and grafana) from respective folders and set up the consumers as a normal Kafka Consumer.

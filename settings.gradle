@@ -1,0 +1,5 @@
+rootProject.name = 'kafka-world'
+
+include 'classic'
+include 'message-sender'
+

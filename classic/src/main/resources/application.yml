@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: demo
+  kafka:
+#    bootstrap-servers: localhost:9092
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      properties:
+#        partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: local-group-1
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      properties:
+#        partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /private
+      exposure.include: info,health,prometheus,gateway,configprops
+      path-mapping.prometheus: /metrics
+  info:
+    java:
+      enabled: true
+  health:
+    diskspace:
+      enabled: false
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      slo:
+        http.server.requests: 5ms, 25ms, 50ms, 100ms, 150ms, 200ms, 250ms, 300ms, 350ms, 400ms, 450ms, 500ms, 600ms, 700ms, 800ms, 900ms, 1000ms, 1250ms, 1500ms, 1750ms, 2000ms, 2500ms, 3000ms, 3500ms, 4000ms, 4500ms, 5000ms, 5500ms, 6000ms, 6500ms, 7000ms, 7500ms, 8000ms
+        http.client.requests: 5ms, 25ms, 50ms, 100ms, 150ms, 200ms, 250ms, 300ms, 350ms, 400ms, 450ms, 500ms, 600ms, 700ms, 800ms, 900ms, 1000ms, 1250ms, 1500ms, 1750ms, 2000ms, 2500ms, 3000ms, 3500ms, 4000ms, 4500ms, 5000ms, 5500ms, 6000ms, 6500ms, 7000ms, 7500ms, 8000ms
+
+#logging:
+#  level:
+#    org:
+#      apache:
+#        kafka: DEBUG

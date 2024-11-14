@@ -12,5 +12,7 @@ scrape_configs:
     metrics_path: /private/metrics
     static_configs:
       - targets:
-          - app:8080
-          - second:8080
+          - app-1:8080
+          - app-2:8080
+          - app-3:8080
+          - app-4:8080

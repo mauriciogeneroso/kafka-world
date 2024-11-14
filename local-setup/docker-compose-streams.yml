@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    extends:
+      file: ../kafka/docker-compose.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: ../kafka/docker-compose.yml
+      service: kafka
+
+  kafka-ui:
+    extends:
+      file: ../kafka/docker-compose.yml
+      service: kafka-ui
+
+  prometheus:
+    extends:
+      file: ../tools/docker-compose.yml
+      service: prometheus
+
+  grafana:
+    extends:
+      file: ../tools/docker-compose.yml
+      service: grafana
+
+  init-kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:29092 --list
+      
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic titles --replication-factor 1 --partitions 3
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic rights --replication-factor 1 --partitions 3
+      
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:29092 --list
+      "
+
+  app-1:
+    build: ../streams
+    restart: always
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      init-kafka:
+        condition: service_completed_successfully
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/private/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 3

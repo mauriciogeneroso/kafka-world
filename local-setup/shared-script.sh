@@ -4,23 +4,21 @@ Green='\033[0;32m'
 Yellow='\033[0;33m'
 NC='\033[0m' # No Color
 
-PREFIX="kafka-world"
+PREFIX="local-setup"
 DOCKER_COMPOSE_FILE=$1
 APPLICATION_FOLDER=$2
-SERVICES=$3
+shift 2
 
-for service in "${SERVICES[@]}"
-do
-    DOCKER_IMAGE_ID=$(docker images -aq ${PREFIX}-${service})
+for app in "$@"; do
+    DOCKER_IMAGE_ID=$(docker images -aq ${PREFIX}-${app})
     if [[ ! -z "${DOCKER_IMAGE_ID}" ]]; then
-
-        LIVE_CONTAINER_ID=$(docker ps -a | grep `docker images | grep ${DOCKER_IMAGE_ID} | awk '{print $1":"$2}'` | awk '{print $1}')
+        LIVE_CONTAINER_ID=$(docker ps -a | grep `docker images | grep ${DOCKER_IMAGE_ID} | awk '{print $1}'` | awk '{print $1}')
         if [[ ! -z "${LIVE_CONTAINER_ID}" ]]; then
-            printf "${Green}Removing existing container for ${Yellow}${service}${Green} with image id: ${Yellow}${DOCKER_IMAGE_ID}${NC}\n"
+            printf "${Green}Removing existing container for ${Yellow}${app}${Green} with image id: ${Yellow}${DOCKER_IMAGE_ID}${NC}\n"
             docker rm -f "${LIVE_CONTAINER_ID}"
         fi
 
-        printf "${Green}Removing existing docker image for ${Yellow}${service}${Green} with id: ${Yellow}${DOCKER_IMAGE_ID}${NC}\n"
+        printf "${Green}Removing existing docker image for ${Yellow}${app}${Green} with id: ${Yellow}${DOCKER_IMAGE_ID}${NC}\n"
         docker rmi "${DOCKER_IMAGE_ID}"
     fi
 done

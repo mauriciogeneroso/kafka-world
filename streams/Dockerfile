@@ -10,4 +10,4 @@ RUN apk add --update \
 
 RUN apk add --no-cache libstdc++
 
-ENTRYPOINT exec java -jar /apps/streams.jar
+ENTRYPOINT exec java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar /apps/streams.jar

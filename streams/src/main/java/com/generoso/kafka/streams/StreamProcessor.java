@@ -34,16 +34,16 @@ public class StreamProcessor {
         KTable<String, String> table1 = builder.table("titles", Consumed.with(Serdes.String(), Serdes.String()));
         KTable<String, String> table2 = builder.table("rights", Consumed.with(Serdes.String(), Serdes.String()));
 
-//        table1.toStream().peek((k, v) -> System.out.println("Received key : " + k + " value : " + v));
-//        table2.toStream().peek((k, v) -> System.out.println("Received key : " + k + " value : " + v));
+        table1.toStream().peek((k, v) -> System.out.println("Received key : " + k + " value : " + v));
+        table2.toStream().peek((k, v) -> System.out.println("Received key : " + k + " value : " + v));
 
         KTable<String, String> joinedTable = table1.join(table2,
             (value1, value2) -> value1 + "-" + value2,
             Materialized.with(Serdes.String(), Serdes.String())
         );
 
-//        joinedTable.toStream().foreach((k, v) ->
-//            System.out.println("merged key : " + k + " value : " + v));
+        joinedTable.toStream().foreach((k, v) ->
+            System.out.println("merged key : " + k + " value : " + v));
 
         KafkaStreams streams = new KafkaStreams(builder.build(), properties());
         new KafkaStreamsMetrics(streams).bindTo(meterRegistry);
